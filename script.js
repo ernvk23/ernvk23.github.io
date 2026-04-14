@@ -14,7 +14,7 @@
     // Pre-compute initial glitch state (fixed, not changing)
     const glitched = text.split('').map(c => c === ' ' ? ' ' : glyphs[Math.floor(Math.random() * glyphs.length)]).join('');
 
-    const duration = 1000;
+    const duration = 1250;
     const start = performance.now();
 
     function tick(now) {
