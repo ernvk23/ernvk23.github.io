@@ -1,45 +1,26 @@
-// Progressive reveal — each char locks in one at a time
+// powerglitch-based glitch on heading
 (function () {
-    // Show emoji immediately
-    const emoji = document.querySelector('.emoji-reveal');
-    if (emoji) emoji.style.opacity = '1';
-
     const el = document.querySelector('.glitch-text');
-    if (el) el.style.opacity = '1';
     if (!el) return;
 
-    const text = el.textContent;
-    const glyphs = '!@#$%^&*_+=~|<>?/\\';
-
-    // Pre-compute initial glitch state (fixed, not changing)
-    const glitched = text.split('').map(c => c === ' ' ? ' ' : glyphs[Math.floor(Math.random() * glyphs.length)]).join('');
-
-    const duration = 1250;
-    const start = performance.now();
-
-    function tick(now) {
-        const progress = Math.min((now - start) / duration, 1);
-        const revealed = Math.floor(progress * text.length);
-        let result = '';
-        for (let i = 0; i < text.length; i++) {
-            if (i < revealed) {
-                result += text[i];
-            } else if (i === revealed) {
-                result += text[i];
-            } else {
-                result += glitched[i];
-            }
+    PowerGlitch.glitch(el, {
+        hideOverflow: true,
+        "timing": {
+            "duration": 2000,
+            "iterations": 2
+        },
+        "glitchTimeSpan": {
+            "start": 0.3
+        },
+        "shake": {
+            "amplitudeX": 0.01,
+            "amplitudeY": 0.03
+        },
+        "slice": {
+            "count": 3,
+            "velocity": 10
         }
-        el.textContent = result;
-        if (progress < 1) {
-            requestAnimationFrame(tick);
-        } else {
-            el.textContent = text;
-        }
-    }
-
-    el.textContent = glitched;
-    requestAnimationFrame(tick);
+    });
 })();
 
 // Particle animation system
