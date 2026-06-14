@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edgar R.N | Software Engineer</title>
+    <title data-i18n="title">Edgar R.N | Software Engineer</title>
     <meta name="description"
         content="Automation Engineer bridging embedded systems & backend development. Open-source & Linux enthusiast.">
     <meta name="author" content="Edgar Rodriguez Novikov">
@@ -24,30 +24,46 @@
     </script>
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="style.css">
+    <link rel="preload" href="assets/fonts/ShantellSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/ShantellSans-Bold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="style.css?v=2">
+
+    <script>
+        (function () {
+            try {
+                var lang = (navigator.language || 'en').toLowerCase();
+                if (lang.indexOf('es') === 0) document.documentElement.classList.add('content-loading');
+            } catch (e) {}
+        })();
+    </script>
 </head>
 
 <body>
+    <div class="lang-switcher" role="group" aria-label="Language selector">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="es" aria-pressed="false">ES</button>
+    </div>
     <canvas id="canvas-bg"></canvas>
     <main>
         <section class="intro">
-            <h1 class="glitch-text">👋 Aloha, happy you're here :)</h1>
-            <p>I'm Edgar, Automation Engineer bridging embedded systems and backend development.
+            <h1 class="glitch-text" data-i18n="greeting">👋 Aloha, happy you're here :)</h1>
+            <p data-i18n="intro">I'm Edgar, Automation Engineer bridging embedded systems and backend development.
                 I write code, break hardware, and automate whatever I can. Linux enthusiast, lifelong learner.</p>
         </section>
 
         <section class="projects">
-            <p class="section-label">A few open-source projects:</p>
+            <p class="section-label" data-i18n="projectsLabel">A few open-source projects:</p>
             <div class="project-links">
                 <a href="https://ernvk23.github.io/dyslexia-away/" target="_blank" rel="noopener noreferrer"
                     class="project-link">
                     <span class="project-name">DyslexiaAway</span>
-                    <span class="project-desc">Browser extension for dyslexic-friendly reading</span>
+                    <span class="project-desc" data-i18n="projectDyslexia">Browser extension for dyslexic-friendly
+                        reading</span>
                 </a>
                 <a href="https://github.com/ernvk23/wg-lite-hop" target="_blank" rel="noopener noreferrer"
                     class="project-link">
                     <span class="project-name">wg-lite-hop</span>
-                    <span class="project-desc">One script. Your VPN. Your Privacy.</span>
+                    <span class="project-desc" data-i18n="projectWg">One script. Your VPN. Your Privacy.</span>
                 </a>
             </div>
         </section>
@@ -74,7 +90,7 @@
         </nav>
     </main>
     <script src="assets/powerglitch.min.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
 </body>
 
 </html>

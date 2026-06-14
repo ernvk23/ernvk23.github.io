@@ -74,6 +74,55 @@ main {
     flex-direction: column;
     justify-content: space-around;
     gap: 2rem;
+    transition: opacity 0.2s ease;
+}
+
+html.content-loading main,
+main.content-loading {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.lang-switcher {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.25rem;
+    z-index: 10;
+}
+
+.lang-switcher button {
+    background: var(--card-bg);
+    border: 1px solid var(--subtle);
+    color: var(--muted);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.lang-switcher button[aria-pressed="true"] {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+}
+
+.lang-switcher button:active {
+    transform: scale(0.95);
+}
+
+@media (hover: hover) {
+    .lang-switcher button:hover {
+        background: var(--text);
+        color: var(--bg);
+        border-color: var(--text);
+    }
 }
 
 .intro {
