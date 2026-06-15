@@ -107,7 +107,9 @@ main.content-loading {
     -webkit-tap-highlight-color: transparent;
 }
 
-.lang-switcher button[aria-pressed="true"] {
+.lang-switcher button[aria-pressed="true"],
+html[lang="en"] .lang-switcher button[data-lang="en"],
+html[lang="es"] .lang-switcher button[data-lang="es"] {
     background: var(--text);
     color: var(--bg);
     border-color: var(--text);

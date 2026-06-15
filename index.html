@@ -39,21 +39,24 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preload" href="assets/fonts/ShantellSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/ShantellSans-Bold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
 
     <script>
         (function () {
             try {
-                var lang = (navigator.language || 'en').toLowerCase();
-                if (lang.indexOf('es') === 0) document.documentElement.classList.add('content-loading');
-            } catch (e) {}
+                var stored = localStorage.getItem('preferred-lang');
+                var lang = stored || (navigator.language || 'en').toLowerCase();
+                var isEs = lang.indexOf('es') === 0 || stored === 'es';
+                document.documentElement.lang = isEs ? 'es' : 'en';
+                if (isEs) document.documentElement.classList.add('content-loading');
+            } catch (e) { }
         })();
     </script>
 </head>
 
 <body>
     <div class="lang-switcher" role="group" aria-label="Language selector">
-        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
         <button type="button" data-lang="es" aria-pressed="false">ES</button>
     </div>
     <canvas id="canvas-bg"></canvas>
@@ -103,7 +106,7 @@
         </nav>
     </main>
     <script src="assets/powerglitch.min.js"></script>
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
 </body>
 
 </html>

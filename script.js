@@ -112,9 +112,31 @@
         }
     }
 
+    function saveLanguagePreference(lang) {
+        try {
+            localStorage.setItem('preferred-lang', lang);
+        } catch (e) {}
+    }
+
+    function loadLanguagePreference() {
+        try {
+            return localStorage.getItem('preferred-lang');
+        } catch (e) {
+            return null;
+        }
+    }
+
     function detectLanguage() {
         const lang = (navigator.language || 'en').toLowerCase();
         return lang.startsWith('es') ? 'es' : 'en';
+    }
+
+    function resolveInitialLanguage() {
+        const preference = loadLanguagePreference();
+        if (preference === 'es' || preference === 'en') {
+            return preference;
+        }
+        return detectLanguage();
     }
 
     function init() {
@@ -122,12 +144,14 @@
             btn.addEventListener('click', () => {
                 const lang = btn.dataset.lang;
                 if (lang && lang !== document.documentElement.lang) {
+                    saveLanguagePreference(lang);
                     setLanguage(lang, true);
                 }
             });
         });
 
-        const initialLang = detectLanguage();
+        const initialLang = resolveInitialLanguage();
+        saveLanguagePreference(initialLang);
         if (initialLang === 'es') {
             setLanguage('es', true);
         } else {
