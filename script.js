@@ -9,6 +9,7 @@
             projectsLabel: "A few open-source projects:",
             projectDyslexia: "Browser extension for dyslexic-friendly reading",
             projectWg: "One script. Your VPN. Your Privacy.",
+            projectGrayzen: "Per-app grayscale for Android",
             langSelector: "Language selector"
         },
         es: {
@@ -19,6 +20,7 @@
             projectsLabel: "Algunos proyectos open-source:",
             projectDyslexia: "Extensión de navegador para lectura amigable con la dislexia",
             projectWg: "Un script. Tu VPN. Tu privacidad.",
+            projectGrayzen: "Escala de grises por app en Android",
             langSelector: "Selector de idioma"
         }
     };
