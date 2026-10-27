@@ -194,6 +194,12 @@
             .getPropertyValue('--particle-connection-color').trim() || 'rgba(37, 99, 235, 0.25)';
     }
 
+    function withAlpha(color, alpha) {
+        const parts = color.match(/[\d.]+/g);
+        if (!parts || parts.length < 3) return color;
+        return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${alpha})`;
+    }
+
     function getParticleSettings() {
         if (cachedScreenWidth < 640) {
             return { count: 30, distance: 120 };
@@ -275,7 +281,7 @@
                     const opacity = 0.2 * (1 - dist / settings.distance);
 
                     ctx.beginPath();
-                    ctx.strokeStyle = `rgba(37, 99, 235, ${opacity})`;
+                    ctx.strokeStyle = withAlpha(cachedConnectionColor, opacity);
                     ctx.lineWidth = 1;
                     ctx.moveTo(p1.x, p1.y);
                     ctx.lineTo(p2.x, p2.y);
@@ -296,6 +302,10 @@
     // Initialize
     updateCssCache();
     setInterval(updateCssCache, CSS_UPDATE_INTERVAL);
+
+    const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    if (themeQuery.addEventListener) themeQuery.addEventListener('change', updateCssCache);
+    else themeQuery.addListener(updateCssCache);
 
     window.addEventListener('resize', resize);
     requestAnimationFrame(start);
