@@ -33,7 +33,7 @@
     --particle-connection-color: rgba(37, 99, 235, 0.22);
     --glass-highlight: rgba(255, 255, 255, 0.4);
     --card-glow: rgba(37, 99, 235, 0.14);
-    --glow: rgba(37, 99, 235, 0.18);
+    --glow: rgba(37, 99, 235, 0.15);
 }
 
 @media (prefers-color-scheme: dark) {
