@@ -29,11 +29,11 @@
     --subtle: #e5e7eb;
     --accent: #2563eb;
     --card-bg: rgba(254, 252, 245, 0.6);
-    --particle-color: rgba(37, 99, 235, 0.25);
-    --particle-connection-color: rgba(37, 99, 235, 0.15);
+    --particle-color: rgba(37, 99, 235, 0.35);
+    --particle-connection-color: rgba(37, 99, 235, 0.22);
     --glass-highlight: rgba(255, 255, 255, 0.4);
     --card-glow: rgba(37, 99, 235, 0.14);
-    --glow: rgba(37, 99, 235, 0.1);
+    --glow: rgba(37, 99, 235, 0.18);
 }
 
 @media (prefers-color-scheme: dark) {
