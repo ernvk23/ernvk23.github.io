@@ -256,6 +256,7 @@ html[lang="es"] .lang-switcher button[data-lang="es"] {
 }
 
 .projects-panel {
+    --term-line: 2.5rem;
     border: 1px solid var(--line);
     border-radius: 0.5rem;
     background: var(--surface);
@@ -267,6 +268,7 @@ html[lang="es"] .lang-switcher button[data-lang="es"] {
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
+    min-height: var(--term-line);
     padding: 0.65rem 1.15rem;
     background: var(--surface-2);
     border-bottom: 1px solid var(--line);
@@ -318,7 +320,10 @@ html[lang="es"] .lang-switcher button[data-lang="es"] {
 }
 
 .projects-command {
-    padding: 0.6rem 1.15rem;
+    display: flex;
+    align-items: center;
+    min-height: var(--term-line);
+    padding: 0 1.15rem;
     border-bottom: 1px solid var(--line);
     font-family: var(--mono);
     font-size: 0.72rem;
@@ -342,6 +347,7 @@ html[lang="es"] .lang-switcher button[data-lang="es"] {
     grid-template-areas: "icon name desc";
     align-items: center;
     gap: 0.8rem;
+    min-height: var(--term-line);
     padding: 0.4rem 1.15rem;
     color: var(--text);
     text-decoration: none;
