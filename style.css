@@ -350,6 +350,7 @@ html[lang="es"] .lang-switcher button[data-lang="es"] {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    padding-bottom: 0.4rem;
 }
 
 .project-link {
