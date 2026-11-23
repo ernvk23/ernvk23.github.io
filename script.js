@@ -237,7 +237,8 @@
     const SANS = "'Shantell Sans', system-ui, sans-serif";
     const LIFE = 700;
     const MAX = 16;
-    const STEP = 10;       // spawn every 10 px of travel
+    const STEP = 10;       // spawn every 10 px of travel, cursor or finger
+    const TOUCH_LIFT = 20; // draw above the finger so it stays visible
     const REACH = 112;     // 3 cm at 96 dpi
 
     let glyphs = [];
@@ -345,28 +346,63 @@
 
     let tapX = 0;
     let tapY = 0;
+    let touchLastX = 0;
+    let touchLastY = 0;
+    let touchBlocked = false;
+    let scrolling = false;
+
+    window.addEventListener('scroll', () => {
+        scrolling = true;
+        if (glyphs.length) {
+            glyphs = [];
+            start();
+        }
+    }, { passive: true });
 
     window.addEventListener('pointerdown', event => {
         if (event.pointerType !== 'touch' || !event.isPrimary) return;
         tapX = event.clientX;
         tapY = event.clientY;
+        touchLastX = tapX;
+        touchLastY = tapY - TOUCH_LIFT;
+        scrolling = false;
+        const target = event.target;
+        touchBlocked = target instanceof Element && !!target.closest('a, button, .projects-bar, .section-label');
+    }, { passive: true });
+
+    window.addEventListener('pointermove', event => {
+        if (event.pointerType !== 'touch' || !event.isPrimary) return;
+        if (!isMinimized() || touchBlocked || scrolling) return;
+
+        const x = event.clientX;
+        const y = event.clientY - TOUCH_LIFT;
+
+        pointerX = x;
+        pointerY = y;
+
+        const dx = x - touchLastX;
+        const dy = y - touchLastY;
+        if (dx * dx + dy * dy < STEP * STEP) return;
+
+        touchLastX = x;
+        touchLastY = y;
+        spawn(performance.now());
+        start();
     }, { passive: true });
 
     window.addEventListener('pointerup', event => {
         if (event.pointerType !== 'touch' || !event.isPrimary) return;
-        if (!isMinimized()) return;
+        if (!isMinimized() || scrolling) return;
+        if (touchBlocked) return;
 
         const dx = event.clientX - tapX;
         const dy = event.clientY - tapY;
         if (dx * dx + dy * dy > 12 * 12) return; // dragged or scrolled, not a tap
 
-        const target = event.target;
-        if (target instanceof Element && target.closest('a, button, .projects-bar, .section-label')) return;
-
         // A few signs just above the finger, where the tap does not cover them.
         for (let i = 0; i < 3; i++) {
             pointerX = event.clientX + (Math.random() - 0.5) * 24;
-            pointerY = event.clientY - 18 + (Math.random() - 0.5) * 12;
+            pointerY = event.clientY - TOUCH_LIFT + (Math.random() - 0.5) * 12;
             spawn(performance.now());
         }
         lastX = pointerX;
