@@ -302,3 +302,48 @@
     window.addEventListener('resize', resize);
     resize();
 })();
+
+// Ambient code — a faint, looping coding session behind the page
+(function () {
+    const wrap = document.querySelector('.ambient-code');
+    if (!wrap) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const BLOCKS = [
+        ['$ source .venv/bin/activate', '$ python3 -m build', 'collecting packages...', 'built opencave-0.1.0'],
+        ['$ pytest -q', '........................', '24 passed in 0.83s'],
+        ['$ git status --short', ' M src/app.py', ' M static/style.css', '?? notes.txt'],
+        ['$ make lint', 'ruff check .', 'mypy --strict .', 'Success: no issues found'],
+        ['$ podman build -t opencave .', 'STEP 1/6: FROM alpine:3.20', 'STEP 3/6: COPY . /workspace', 'STEP 6/6: COMMIT opencave', 'Successfully tagged opencave:latest'],
+        ['$ ls ~/projects', 'dyslexia-away/', 'wg-lite-hop/', 'grayzen/', 'opencave/'],
+        ['$ tail -f /var/log/app.log', '[info] worker ready', '[info] workers=4 queue=0', '[warn] job 42 retrying'],
+        ['>>> def main():', '...     return run()', '...', '>>> main()', '0'],
+        ['$ curl -s localhost:8080/health', '{"status":"ok"}', '$ uptime', 'up 4 days,  load average: 0.08'],
+        ['$ git log --oneline -3', 'a1b2c3d feat: ship it', 'e4f5a6b fix: edge case'],
+        ['$ ssh dev@localhost', 'Last login: today', '~ $ echo $SHELL', '/bin/bash'],
+        ['$ nix develop', 'warning: using cached dev shell', '~ $ cargo test --quiet', 'running 18 tests', 'test result: ok. 18 passed']
+    ];
+    const TARGET = 120;
+    const COLUMNS = 4;
+
+    for (let c = 0; c < COLUMNS; c++) {
+        const lines = [];
+        let block = c * 2;
+
+        while (lines.length < TARGET) {
+            lines.push(...BLOCKS[block % BLOCKS.length], '');
+            block += 1 + (c % 2);
+        }
+
+        const content = lines.slice(0, TARGET).join('\n');
+        const column = document.createElement('div');
+        const pre = document.createElement('pre');
+
+        column.className = 'ambient-column';
+        pre.textContent = `${content}\n${content}`;
+        column.append(pre);
+        column.style.setProperty('--ambient-duration', `${170 + c * 17}s`);
+        column.style.setProperty('--ambient-delay', `${-c * 29}s`);
+        wrap.append(column);
+    }
+})();
