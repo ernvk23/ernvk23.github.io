@@ -272,11 +272,11 @@ html[lang="es"] .lang-switcher button[data-lang="es"] {
     appearance: none;
     display: grid;
     place-items: center;
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-    padding: 0.15rem 0.3rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
     border: 0;
-    border-radius: 0.2rem;
+    border-radius: 50%;
     background: none;
     color: var(--muted);
     font-family: var(--mono);
