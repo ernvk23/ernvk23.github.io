@@ -26,7 +26,7 @@
             projectDyslexia: "Extensión de navegador para lectura amigable con la dislexia",
             projectWg: "Un script. Tu VPN. Tu privacidad.",
             projectGrayzen: "Escala de grises por app en Android",
-            projectOpenCave: "OpenCode en Podman rootless. Delimita tu agente.",
+            projectOpenCave: "OpenCode en rootless Podman. Limita tu agente.",
             langSelector: "Selector de idioma"
         }
     };
