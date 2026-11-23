@@ -206,9 +206,6 @@
             ? toggle.dataset.labelMinimize || 'Minimize projects'
             : toggle.dataset.labelExpand || 'Expand projects');
 
-        const icon = toggle.querySelector('.projects-toggle-icon');
-        if (icon) icon.textContent = next ? '–' : '+';
-
         body.hidden = !next;
         panel.classList.toggle('is-collapsed', !next);
         ambient?.classList.toggle('is-paused', !next);
