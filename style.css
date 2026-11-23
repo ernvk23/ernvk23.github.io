@@ -33,7 +33,7 @@
     --accent: #2563eb;
     --accent-soft: rgba(37, 99, 235, 0.06);
     --trail: rgba(37, 99, 235, 0.7);
-    --ambient: rgba(75, 85, 99, 0.18);
+    --ambient: rgba(75, 85, 99, 0.15);
     --sans: 'Shantell Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 }
