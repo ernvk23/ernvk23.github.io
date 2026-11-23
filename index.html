@@ -40,10 +40,13 @@
     }
     </script>
 
+    <meta name="theme-color" content="#fefcf5" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1a1b24" media="(prefers-color-scheme: dark)">
+
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preload" href="assets/fonts/ShantellSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/ShantellSans-Bold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="style.css?v=13">
+    <link rel="stylesheet" href="style.css?v=45">
 
     <script>
         (function () {
@@ -59,11 +62,11 @@
 </head>
 
 <body>
-    <div class="lang-switcher" role="group" aria-label="Language selector">
+    <nav class="lang-switcher" aria-label="Language selector">
         <button type="button" data-lang="en" aria-pressed="false">EN</button>
         <button type="button" data-lang="es" aria-pressed="false">ES</button>
-    </div>
-    <canvas id="canvas-bg"></canvas>
+    </nav>
+    <canvas id="pointer-trail" aria-hidden="true"></canvas>
     <main>
         <section class="intro">
             <h1 class="glitch-text" data-i18n="greeting">👋 Aloha, happy you're here :)</h1>
@@ -72,27 +75,49 @@
         </section>
 
         <section class="projects">
-            <p class="section-label" data-i18n="projectsLabel">A few open-source projects:</p>
-            <div class="project-links">
-                <a href="https://ernvk23.github.io/dyslexia-away/" target="_blank" rel="noopener noreferrer"
-                    class="project-link">
-                    <img class="project-icon" src="assets/icons/dyslexia-away.png" alt="" width="32" height="32">
-                    <span class="project-name">DyslexiaAway</span>
-                    <span class="project-desc" data-i18n="projectDyslexia">Browser extension for dyslexic-friendly
-                        reading</span>
-                </a>
-                <a href="https://github.com/ernvk23/wg-lite-hop" target="_blank" rel="noopener noreferrer"
-                    class="project-link">
-                    <img class="project-icon" src="assets/icons/wg-lite-hop.svg" alt="" width="32" height="32">
-                    <span class="project-name">wg-lite-hop</span>
-                    <span class="project-desc" data-i18n="projectWg">One script. Your VPN. Your Privacy.</span>
-                </a>
-                <a href="https://ernvk23.github.io/grayzen/" target="_blank" rel="noopener noreferrer"
-                    class="project-link">
-                    <img class="project-icon" src="assets/icons/grayzen.svg" alt="" width="32" height="32">
-                    <span class="project-name">Grayzen</span>
-                    <span class="project-desc" data-i18n="projectGrayzen">Per-app grayscale for Android</span>
-                </a>
+            <h2 class="section-label" data-i18n="projectsLabel">A few open-source projects:</h2>
+            <div class="projects-panel">
+                <div class="projects-bar" aria-hidden="true">~/projects</div>
+                <div class="projects-command" aria-hidden="true"><span class="projects-command-prompt">$</span> ls -1</div>
+                <div class="project-links">
+                    <a href="https://ernvk23.github.io/dyslexia-away/" target="_blank" rel="noopener noreferrer"
+                        class="project-link">
+                        <img class="project-icon" src="assets/icons/dyslexia-away.png" alt="" width="32" height="32">
+                        <span class="project-name" translate="no">DyslexiaAway</span>
+                        <span class="project-desc">
+                            <span class="project-comment" aria-hidden="true">#</span>
+                            <span data-i18n="projectDyslexia">Browser extension for dyslexic-friendly reading</span>
+                        </span>
+                    </a>
+                    <a href="https://github.com/ernvk23/wg-lite-hop" target="_blank" rel="noopener noreferrer"
+                        class="project-link">
+                        <img class="project-icon" src="assets/icons/wg-lite-hop.svg" alt="" width="32" height="32">
+                        <span class="project-name" translate="no">wg-lite-hop</span>
+                        <span class="project-desc">
+                            <span class="project-comment" aria-hidden="true">#</span>
+                            <span data-i18n="projectWg">One script. Your VPN. Your Privacy.</span>
+                        </span>
+                    </a>
+                    <a href="https://ernvk23.github.io/grayzen/" target="_blank" rel="noopener noreferrer"
+                        class="project-link">
+                        <img class="project-icon" src="assets/icons/grayzen.svg" alt="" width="32" height="32">
+                        <span class="project-name" translate="no">Grayzen</span>
+                        <span class="project-desc">
+                            <span class="project-comment" aria-hidden="true">#</span>
+                            <span data-i18n="projectGrayzen">Per-app grayscale for Android</span>
+                        </span>
+                    </a>
+                    <a href="https://github.com/ernvk23/opencave" target="_blank" rel="noopener noreferrer"
+                        class="project-link">
+                        <img class="project-icon" src="assets/icons/opencave.svg" alt="" width="32" height="32">
+                        <span class="project-name" translate="no">OpenCave</span>
+                        <span class="project-desc">
+                            <span class="project-comment" aria-hidden="true">#</span>
+                            <span data-i18n="projectOpenCave">OpenCode in rootless Podman, scoped to your project
+                                folder</span>
+                        </span>
+                    </a>
+                </div>
             </div>
         </section>
 
@@ -118,7 +143,7 @@
         </nav>
     </main>
     <script src="assets/powerglitch.min.js"></script>
-    <script src="script.js?v=13"></script>
+    <script src="script.js?v=45"></script>
 </body>
 
 </html>

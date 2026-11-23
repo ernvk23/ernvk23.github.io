@@ -10,6 +10,7 @@
             projectDyslexia: "Browser extension for dyslexic-friendly reading",
             projectWg: "One script. Your VPN. Your Privacy.",
             projectGrayzen: "Per-app grayscale for Android",
+            projectOpenCave: "OpenCode in rootless Podman, scoped to your project folder",
             langSelector: "Language selector"
         },
         es: {
@@ -21,6 +22,7 @@
             projectDyslexia: "Extensión de navegador para lectura amigable con la dislexia",
             projectWg: "Un script. Tu VPN. Tu privacidad.",
             projectGrayzen: "Escala de grises por app en Android",
+            projectOpenCave: "OpenCode en Podman rootless, limitado a tu carpeta de proyecto",
             langSelector: "Selector de idioma"
         }
     };
@@ -28,6 +30,7 @@
     function initGlitch() {
         const oldEl = document.querySelector('.glitch-text');
         if (!oldEl || typeof PowerGlitch === 'undefined') return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
         const newEl = oldEl.cloneNode(true);
         oldEl.parentNode.replaceChild(newEl, oldEl);
@@ -50,6 +53,11 @@
                 velocity: 10
             }
         });
+
+        // Glitch layers are visual clones; keep screen readers on the real heading.
+        newEl.parentElement
+            .querySelectorAll('[data-islayer]')
+            .forEach(layer => layer.setAttribute('aria-hidden', 'true'));
     }
 
     function loadFonts() {
@@ -169,144 +177,128 @@
     }
 })();
 
-// Particle animation system
+// Pointer trail — signs left along the path, capped at 3 cm, fading out
 (function () {
-    const canvas = document.getElementById('canvas-bg');
+    const canvas = document.getElementById('pointer-trail');
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    let width, height, particles;
-    let animationId;
+    if (!ctx) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    // Cached values for performance
-    let cachedParticleColor = '';
-    let cachedConnectionColor = '';
-    let cachedScreenWidth = 0;
-    let cachedScreenHeight = 0;
+    const GLYPHS = ['{', '}', '<', '>', '/', '\\', '#', ';', ':', '+', '=', '0', '1', 'λ'];
+    const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+    const LIFE = 700;
+    const MAX = 16;
+    const STEP = 10;       // spawn every 10 px of travel
+    const REACH = 112;     // 3 cm at 96 dpi
 
-    const speed = 0.3;
-    const CSS_UPDATE_INTERVAL = 1000;
+    let glyphs = [];
+    let width = 0;
+    let height = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let lastX = 1e4;
+    let lastY = 1e4;
+    let frame = 0;
+    let trailColor = 'rgba(37, 99, 235, 0.7)';
 
-    function updateCssCache() {
-        cachedParticleColor = getComputedStyle(document.documentElement)
-            .getPropertyValue('--particle-color').trim() || 'rgba(37, 99, 235, 0.4)';
-        cachedConnectionColor = getComputedStyle(document.documentElement)
-            .getPropertyValue('--particle-connection-color').trim() || 'rgba(37, 99, 235, 0.25)';
-    }
-
-    function withAlpha(color, alpha) {
-        const parts = color.match(/[\d.]+/g);
-        if (!parts || parts.length < 3) return color;
-        return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${alpha})`;
-    }
-
-    function getParticleSettings() {
-        if (cachedScreenWidth < 640) {
-            return { count: 30, distance: 120 };
-        } else if (cachedScreenWidth < 1024) {
-            return { count: 50, distance: 180 };
-        }
-        return { count: 70, distance: 240 };
-    }
-
-    class Particle {
-        constructor() {
-            this.init();
-        }
-
-        init() {
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.vx = (Math.random() - 0.5) * speed;
-            this.vy = (Math.random() - 0.5) * speed;
-            this.radius = Math.random() * 3 + 2;
-        }
-
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-
-            if (this.x < 0) this.x = width;
-            if (this.x > width) this.x = 0;
-            if (this.y < 0) this.y = height;
-            if (this.y > height) this.y = 0;
-        }
-
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = cachedParticleColor;
-            ctx.fill();
-        }
-    }
-
-    function updateScreenSize() {
-        cachedScreenWidth = window.innerWidth;
-        cachedScreenHeight = window.innerHeight;
-        width = canvas.width = cachedScreenWidth;
-        height = canvas.height = cachedScreenHeight;
+    function readColor() {
+        const value = getComputedStyle(document.documentElement)
+            .getPropertyValue('--trail').trim();
+        if (value) trailColor = value;
     }
 
     function resize() {
-        updateScreenSize();
-        initParticles();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        readColor();
     }
 
-    function initParticles() {
-        particles = [];
-        const settings = getParticleSettings();
-        for (let i = 0; i < settings.count; i++) {
-            particles.push(new Particle());
-        }
+    function spawn(now) {
+        glyphs.push({
+            x: pointerX + (Math.random() - 0.5) * 16,
+            y: pointerY + (Math.random() - 0.5) * 16,
+            size: 10 + Math.random() * 4,
+            alpha: 0.45 + Math.random() * 0.15,
+            born: now,
+            glyph: GLYPHS[(Math.random() * GLYPHS.length) | 0]
+        });
+
+        if (glyphs.length > MAX) glyphs.splice(0, glyphs.length - MAX);
     }
 
-    function animate() {
+    function draw(now) {
+        frame = 0;
+
         ctx.clearRect(0, 0, width, height);
-        const settings = getParticleSettings();
-        const distanceSq = settings.distance * settings.distance;
+        ctx.fillStyle = trailColor;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
 
-        for (let i = 0; i < particles.length; i++) {
-            const p1 = particles[i];
-            p1.update();
-            p1.draw();
+        const alive = [];
 
-            for (let j = i + 1; j < particles.length; j++) {
-                const p2 = particles[j];
-                const dx = p1.x - p2.x;
-                const dy = p1.y - p2.y;
-                const distSq = dx * dx + dy * dy;
+        for (const glyph of glyphs) {
+            const age = now - glyph.born;
+            if (age >= LIFE) continue;
 
-                if (distSq < distanceSq) {
-                    const dist = Math.sqrt(distSq);
-                    const opacity = 0.2 * (1 - dist / settings.distance);
+            const dx = glyph.x - pointerX;
+            const dy = glyph.y - pointerY;
+            if (dx * dx + dy * dy > REACH * REACH) continue;
 
-                    ctx.beginPath();
-                    ctx.strokeStyle = withAlpha(cachedConnectionColor, opacity);
-                    ctx.lineWidth = 1;
-                    ctx.moveTo(p1.x, p1.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.stroke();
-                }
-            }
+            ctx.globalAlpha = glyph.alpha * (1 - age / LIFE);
+            ctx.font = `${glyph.size}px ${MONO}`;
+            ctx.fillText(glyph.glyph, glyph.x, glyph.y);
+            alive.push(glyph);
         }
-        animationId = requestAnimationFrame(animate);
+
+        ctx.globalAlpha = 1;
+        glyphs = alive;
+
+        if (glyphs.length) {
+            frame = requestAnimationFrame(draw);
+        }
     }
 
     function start() {
-        updateScreenSize();
-        updateCssCache();
-        initParticles();
-        animate();
+        if (!frame) frame = requestAnimationFrame(draw);
     }
 
-    // Initialize
-    updateCssCache();
-    setInterval(updateCssCache, CSS_UPDATE_INTERVAL);
+    window.addEventListener('pointermove', event => {
+        if (event.pointerType !== 'mouse') return;
+
+        if (event.target instanceof Element && event.target.closest('.projects, a, button')) {
+            if (glyphs.length) {
+                glyphs = [];
+                start();
+            }
+            return;
+        }
+
+        pointerX = event.clientX;
+        pointerY = event.clientY;
+
+        const dx = pointerX - lastX;
+        const dy = pointerY - lastY;
+        if (dx * dx + dy * dy >= STEP * STEP) {
+            lastX = pointerX;
+            lastY = pointerY;
+            spawn(performance.now());
+            start();
+        }
+    }, { passive: true });
 
     const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    if (themeQuery.addEventListener) themeQuery.addEventListener('change', updateCssCache);
-    else themeQuery.addListener(updateCssCache);
+    if (themeQuery.addEventListener) themeQuery.addEventListener('change', readColor);
+    else themeQuery.addListener(readColor);
 
     window.addEventListener('resize', resize);
-    requestAnimationFrame(start);
+    resize();
 })();
