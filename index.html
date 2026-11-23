@@ -46,7 +46,7 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preload" href="assets/fonts/ShantellSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/ShantellSans-Bold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="style.css?v=14">
+    <link rel="stylesheet" href="style.css?v=15">
 
     <script>
         (function () {
@@ -62,12 +62,14 @@
 </head>
 
 <body>
-    <nav class="lang-switcher" aria-label="Language selector">
-        <button type="button" data-lang="en" aria-pressed="false">EN</button>
-        <button type="button" data-lang="es" aria-pressed="false">ES</button>
-    </nav>
     <div class="ambient-code" aria-hidden="true"></div>
     <canvas id="pointer-trail" aria-hidden="true"></canvas>
+    <header class="site-header">
+        <nav class="lang-switcher" aria-label="Language selector">
+            <button type="button" data-lang="en" aria-pressed="false">EN</button>
+            <button type="button" data-lang="es" aria-pressed="false">ES</button>
+        </nav>
+    </header>
     <main>
         <section class="intro">
             <h1 class="glitch-text" data-i18n="greeting">👋 Aloha, happy you're here :)</h1>
@@ -132,8 +134,10 @@
                 </div>
             </div>
         </section>
+    </main>
 
-        <nav class="socials">
+    <footer class="site-footer">
+        <nav class="socials" aria-label="Contact">
             <a href="mailto:ernvk23@gmail.com" class="social-link" title="Email">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -153,9 +157,9 @@
                 <span>GitHub</span>
             </a>
         </nav>
-    </main>
+    </footer>
     <script src="assets/powerglitch.min.js"></script>
-    <script src="script.js?v=14"></script>
+    <script src="script.js?v=15"></script>
 </body>
 
 </html>

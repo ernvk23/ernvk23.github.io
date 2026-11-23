@@ -196,14 +196,15 @@
     const toggle = document.querySelector('.projects-toggle');
     const body = document.getElementById('projects-body');
     const ambient = document.querySelector('.ambient-code');
+    const mobileLayout = window.matchMedia('(pointer: coarse), (max-width: 640px)');
     if (!panel || !toggle || !body) return;
 
     toggle.addEventListener('click', () => {
         const expanded = toggle.getAttribute('aria-expanded') === 'true';
         const next = !expanded;
 
-        // Keep the page still: reserve the section's expanded height while closed.
-        if (!next && section) {
+        // On desktop the centered text stays put; on mobile the footer follows the panel up.
+        if (!next && section && !mobileLayout.matches) {
             section.style.minHeight = `${section.getBoundingClientRect().height}px`;
         }
 
@@ -222,19 +223,18 @@
     });
 })();
 
-// Pointer trail — signs left along the path, capped at 3 cm, fading out
+// Pointer trail — signs left along the path, or a tap burst on touch
 (function () {
     const canvas = document.getElementById('pointer-trail');
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const ERROR_GLYPHS = ['404', '500', '502', '503', '5xx', 'ERR', 'EACCES', 'ENOENT', '×', '!'];
     const isMinimized = () => document.documentElement.classList.contains('terminal-minimized');
-    const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+    const SANS = "'Shantell Sans', system-ui, sans-serif";
     const LIFE = 700;
     const MAX = 16;
     const STEP = 10;       // spawn every 10 px of travel
@@ -300,7 +300,7 @@
             if (dx * dx + dy * dy > REACH * REACH) continue;
 
             ctx.globalAlpha = glyph.alpha * (1 - age / LIFE);
-            ctx.font = `${glyph.size}px ${MONO}`;
+            ctx.font = `${glyph.size}px ${SANS}`;
             ctx.fillText(glyph.glyph, glyph.x, glyph.y);
             alive.push(glyph);
         }
@@ -341,6 +341,37 @@
             spawn(performance.now());
             start();
         }
+    }, { passive: true });
+
+    let tapX = 0;
+    let tapY = 0;
+
+    window.addEventListener('pointerdown', event => {
+        if (event.pointerType !== 'touch' || !event.isPrimary) return;
+        tapX = event.clientX;
+        tapY = event.clientY;
+    }, { passive: true });
+
+    window.addEventListener('pointerup', event => {
+        if (event.pointerType !== 'touch' || !event.isPrimary) return;
+        if (!isMinimized()) return;
+
+        const dx = event.clientX - tapX;
+        const dy = event.clientY - tapY;
+        if (dx * dx + dy * dy > 12 * 12) return; // dragged or scrolled, not a tap
+
+        const target = event.target;
+        if (target instanceof Element && target.closest('a, button, .projects-bar, .section-label')) return;
+
+        // A few signs just above the finger, where the tap does not cover them.
+        for (let i = 0; i < 3; i++) {
+            pointerX = event.clientX + (Math.random() - 0.5) * 24;
+            pointerY = event.clientY - 18 + (Math.random() - 0.5) * 12;
+            spawn(performance.now());
+        }
+        lastX = pointerX;
+        lastY = pointerY;
+        start();
     }, { passive: true });
 
     const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
