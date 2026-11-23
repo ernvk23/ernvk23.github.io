@@ -12,7 +12,7 @@
             projectDyslexia: "Browser extension for dyslexic-friendly reading",
             projectWg: "One script. Your VPN. Your Privacy.",
             projectGrayzen: "Per-app grayscale for Android",
-            projectOpenCave: "OpenCode in rootless Podman, scoped to your project folder",
+            projectOpenCave: "OpenCode in rootless Podman. Scope your agent.",
             langSelector: "Language selector"
         },
         es: {
@@ -26,7 +26,7 @@
             projectDyslexia: "Extensión de navegador para lectura amigable con la dislexia",
             projectWg: "Un script. Tu VPN. Tu privacidad.",
             projectGrayzen: "Escala de grises por app en Android",
-            projectOpenCave: "OpenCode en Podman rootless, limitado a tu carpeta de proyecto",
+            projectOpenCave: "OpenCode en Podman rootless. Delimita tu agente.",
             langSelector: "Selector de idioma"
         }
     };
