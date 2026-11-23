@@ -358,4 +358,14 @@
     pre.textContent = `${content}\n${content}`;
     stream.append(pre);
     wrap.append(stream);
+
+    // Keep the scroll speed constant when wrapping changes the block height.
+    const speed = 9.6;
+    const fitSpeed = () => {
+        const height = pre.getBoundingClientRect().height / 2;
+        if (height > 0) stream.style.setProperty('--ambient-duration', `${height / speed}s`);
+    };
+
+    fitSpeed();
+    window.addEventListener('resize', fitSpeed);
 })();
