@@ -215,6 +215,7 @@
         body.hidden = !next;
         panel.classList.toggle('is-collapsed', !next);
         ambient?.classList.toggle('is-paused', !next);
+        document.documentElement.classList.toggle('terminal-minimized', !next);
 
         if (next && section) section.style.minHeight = '';
     });
@@ -231,6 +232,8 @@
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const GLYPHS = ['{', '}', '<', '>', '/', '\\', '#', ';', ':', '+', '=', '0', '1', 'λ'];
+    const ERROR_GLYPHS = ['404', '500', '502', '503', '5xx', 'ERR', 'EACCES', 'ENOENT', '×', '!'];
+    const isMinimized = () => document.documentElement.classList.contains('terminal-minimized');
     const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
     const LIFE = 700;
     const MAX = 16;
@@ -245,12 +248,15 @@
     let lastX = 1e4;
     let lastY = 1e4;
     let frame = 0;
-    let trailColor = 'rgba(37, 99, 235, 0.7)';
+    let trailColor = 'rgba(124, 58, 237, 0.7)';
+    let errorColor = 'rgba(220, 38, 38, 0.7)';
 
     function readColor() {
-        const value = getComputedStyle(document.documentElement)
-            .getPropertyValue('--trail').trim();
-        if (value) trailColor = value;
+        const styles = getComputedStyle(document.documentElement);
+        const trail = styles.getPropertyValue('--trail').trim();
+        const error = styles.getPropertyValue('--trail-error').trim();
+        if (trail) trailColor = trail;
+        if (error) errorColor = error;
     }
 
     function resize() {
@@ -266,13 +272,15 @@
     }
 
     function spawn(now) {
+        const pool = isMinimized() ? ERROR_GLYPHS : GLYPHS;
+
         glyphs.push({
             x: pointerX + (Math.random() - 0.5) * 16,
             y: pointerY + (Math.random() - 0.5) * 16,
             size: 10 + Math.random() * 4,
             alpha: 0.45 + Math.random() * 0.15,
             born: now,
-            glyph: GLYPHS[(Math.random() * GLYPHS.length) | 0]
+            glyph: pool[(Math.random() * pool.length) | 0]
         });
 
         if (glyphs.length > MAX) glyphs.splice(0, glyphs.length - MAX);
@@ -282,7 +290,7 @@
         frame = 0;
 
         ctx.clearRect(0, 0, width, height);
-        ctx.fillStyle = trailColor;
+        ctx.fillStyle = isMinimized() ? errorColor : trailColor;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
@@ -317,12 +325,20 @@
     window.addEventListener('pointermove', event => {
         if (event.pointerType !== 'mouse') return;
 
-        if (event.target instanceof Element && event.target.closest('.projects, a, button')) {
-            if (glyphs.length) {
-                glyphs = [];
-                start();
+        const target = event.target;
+        if (target instanceof Element) {
+            const minimized = isMinimized();
+            const blocked = target.closest('a, button')
+                || (!minimized && target.closest('.projects'))
+                || (minimized && target.closest('.projects-bar, .section-label'));
+
+            if (blocked) {
+                if (glyphs.length) {
+                    glyphs = [];
+                    start();
+                }
+                return;
             }
-            return;
         }
 
         pointerX = event.clientX;
