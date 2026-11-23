@@ -7,6 +7,8 @@
             greeting: "👋 Aloha, happy you're here :)",
             intro: "I'm Edgar, Automation Engineer bridging embedded systems and backend development. I write code, break hardware, and automate whatever I can. Linux enthusiast, lifelong learner.",
             projectsLabel: "A few open-source projects:",
+            minimizeProjects: "Minimize projects",
+            expandProjects: "Expand projects",
             projectDyslexia: "Browser extension for dyslexic-friendly reading",
             projectWg: "One script. Your VPN. Your Privacy.",
             projectGrayzen: "Per-app grayscale for Android",
@@ -19,6 +21,8 @@
             greeting: "👋 Aloha, me alegra que estés por aquí :)",
             intro: "Soy Edgar, Ingeniero Automático conectando sistemas embebidos y desarrollo backend. Escribo código, rompo hardware y automatizo todo lo que puedo. Entusiasta de Linux y aprendiz de por vida.",
             projectsLabel: "Algunos proyectos open-source:",
+            minimizeProjects: "Minimizar proyectos",
+            expandProjects: "Expandir proyectos",
             projectDyslexia: "Extensión de navegador para lectura amigable con la dislexia",
             projectWg: "Un script. Tu VPN. Tu privacidad.",
             projectGrayzen: "Escala de grises por app en Android",
@@ -97,6 +101,14 @@
         document.querySelectorAll('.lang-switcher button').forEach(btn => {
             btn.setAttribute('aria-pressed', btn.dataset.lang === lang);
         });
+
+        const projectsToggle = document.querySelector('.projects-toggle');
+        if (projectsToggle) {
+            projectsToggle.dataset.labelMinimize = t.minimizeProjects;
+            projectsToggle.dataset.labelExpand = t.expandProjects;
+            const expanded = projectsToggle.getAttribute('aria-expanded') !== 'false';
+            projectsToggle.setAttribute('aria-label', expanded ? t.minimizeProjects : t.expandProjects);
+        }
     }
 
     function setLanguage(lang, animate) {
@@ -175,6 +187,38 @@
     } else {
         init();
     }
+})();
+
+// Terminal minimize/expand — always starts expanded
+(function () {
+    const panel = document.querySelector('.projects-panel');
+    const bar = document.querySelector('.projects-bar');
+    const toggle = document.querySelector('.projects-toggle');
+    const body = document.getElementById('projects-body');
+    const ambient = document.querySelector('.ambient-code');
+    if (!panel || !toggle || !body) return;
+
+    bar?.addEventListener('click', event => {
+        if (event.target.closest('.projects-toggle')) return;
+        toggle.click();
+    });
+
+    toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        const next = !expanded;
+
+        toggle.setAttribute('aria-expanded', String(next));
+        toggle.setAttribute('aria-label', next
+            ? toggle.dataset.labelMinimize || 'Minimize projects'
+            : toggle.dataset.labelExpand || 'Expand projects');
+
+        const icon = toggle.querySelector('.projects-toggle-icon');
+        if (icon) icon.textContent = next ? '–' : '+';
+
+        body.hidden = !next;
+        panel.classList.toggle('is-collapsed', !next);
+        ambient?.classList.toggle('is-paused', !next);
+    });
 })();
 
 // Pointer trail — signs left along the path, capped at 3 cm, fading out
