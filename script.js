@@ -192,16 +192,10 @@
 // Terminal minimize/expand — always starts expanded
 (function () {
     const panel = document.querySelector('.projects-panel');
-    const bar = document.querySelector('.projects-bar');
     const toggle = document.querySelector('.projects-toggle');
     const body = document.getElementById('projects-body');
     const ambient = document.querySelector('.ambient-code');
     if (!panel || !toggle || !body) return;
-
-    bar?.addEventListener('click', event => {
-        if (event.target.closest('.projects-toggle')) return;
-        toggle.click();
-    });
 
     toggle.addEventListener('click', () => {
         const expanded = toggle.getAttribute('aria-expanded') === 'true';
