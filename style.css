@@ -107,7 +107,7 @@ body {
     color: var(--ambient);
     white-space: pre-wrap;
     overflow-wrap: break-word;
-    animation: ambient-scroll 190s linear infinite;
+    animation: ambient-scroll 210s linear infinite;
     will-change: transform;
 }
 

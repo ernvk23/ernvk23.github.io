@@ -303,38 +303,54 @@
     resize();
 })();
 
-// Ambient code — one faint, looping coding session behind the page
+// Ambient code — a static, looping coding session behind the page
 (function () {
     const wrap = document.querySelector('.ambient-code');
     if (!wrap) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const LINES = [
+    // Static fake output. Nothing here is read from the machine.
+    const BASE = [
         '$ source .venv/bin/activate && python3 -m build --wheel --outdir dist/ && pytest -q && ruff check . && mypy --strict src/',
         '[info] worker ready | queue=0 | workers=4 | uptime=4d 12h | mem=182MB | cpu=0.3% | pid=2048 | env=dev',
         '$ git log --oneline --decorate --graph -8 && git status --short && git diff --stat && git branch --show-current',
         '=> [1/6] FROM alpine:3.20  => [2/6] RUN apk add --no-cache bash curl git  => [3/6] COPY . /workspace  => [6/6] COMMIT opencave',
         '$ ls -1 ~/projects | sort && du -sh ~/projects/* | sort -h && find ~/projects -maxdepth 1 -type d | wc -l',
-        '[ok] 24 tests passed in 0.83s | 0 failed | 0 skipped | coverage 94% | cache hit | workers=4 | seed=0x7f3a',
+        '[ok] 24 tests passed in 0.83s | 0 failed | 0 skipped | coverage 94% | cache hit | workers=4',
         '$ systemctl --user status podman.socket --no-pager -n 3 && podman ps --format "{{.Names}} {{.Status}}"',
         ">>> main() -> 0 | memory 38.2MB | elapsed 12ms | exit 0 | profile=default | args=['--watch']",
         "$ tail -n 5 /var/log/app.log | grep -E 'info|warn|error' | sed -E 's/[0-9]{4}-[0-9]{2}-[0-9]{2}//'",
         '[info] 2026-11-23 10:24:01 worker=3 queue=0 latency=12ms status=ok | [warn] retry=1 job=42 | [ok] flush',
         "$ ssh dev@localhost -p 2222 'echo $SHELL && uname -a && uptime' | head -n 3",
-        '$ nix develop --command cargo test --quiet --release 2>&1 | tail -n 3 && echo done'
+        '$ nix develop --command cargo test --quiet --release 2>&1 | tail -n 3 && echo done',
+        '$ kubectl get pods -A --no-headers | wc -l && kubectl top nodes --no-headers | sort -k2 -h',
+        '[ok] source map generated | modules=128 | chunks=6 | gzip=84KB | time=1.2s',
+        '$ journalctl --user -u app.service -n 4 --no-pager | tail -n 4',
+        '[info] healthcheck ok | db=12ms | cache=0.8ms | queue=0 | errors=0',
+        '$ grep -R "TODO" -n src/ | head -n 3 && wc -l src/**/*.py',
+        '$ docker compose up -d --build && docker compose ps --format "table {{.Name}}\t{{.Status}}"',
+        '[warn] disk usage 72% | clean cache? | freed 1.4GB | path=/var/cache',
+        '$ openssl rand -hex 8 && date -u +"%Y-%m-%dT%H:%M:%SZ"',
+        '$ tmux new -d -s dev && tmux ls && tmux capture-pane -p -t dev | tail -n 2',
+        '[info] lint cache hit | 148 files | 0 errors | 3 warnings | elapsed=240ms',
+        '$ git fetch --all --prune && git branch -vv | head -n 4',
+        '$ curl -sS -o /dev/null -w "%{http_code} %{time_total}s\n" https://example.com/health'
     ];
-    const TARGET = 120;
-    const lines = [];
-    let line = 0;
+    const LINES = [];
 
-    while (lines.length < TARGET) {
-        lines.push(LINES[line % LINES.length]);
-        line++;
-
-        if (line % LINES.length === 0) lines.push('');
+    // Four lightly-numbered passes give roughly two screens before the loop repeats.
+    for (let pass = 0; pass < 4; pass++) {
+        for (const line of BASE) {
+            LINES.push(line.replace(/\d+(?:\.\d+)?/g, match => {
+                const value = Number(match);
+                if (!Number.isFinite(value)) return match;
+                const decimals = (match.split('.')[1] || '').length;
+                return (value + pass * (decimals ? 0.07 : 3)).toFixed(decimals);
+            }));
+        }
     }
 
-    const content = lines.slice(0, TARGET).join('\n');
+    const content = LINES.join('\n');
     const stream = document.createElement('div');
     const pre = document.createElement('pre');
 
