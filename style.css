@@ -326,8 +326,42 @@ html[lang="es"] .lang-switcher button[data-lang="es"] {
     display: block;
 }
 
-.projects-toggle[aria-expanded="true"] .projects-toggle-vertical {
-    display: none;
+.projects-toggle-minus,
+.projects-toggle-x path {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.projects-toggle-x {
+    opacity: 0;
+    transform: scale(0.55) rotate(-45deg);
+    transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.projects-toggle[aria-expanded="false"] .projects-toggle-x {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+}
+
+.projects-toggle-minus {
+    opacity: 1;
+    transition: opacity 0.16s ease;
+}
+
+.projects-toggle[aria-expanded="false"] .projects-toggle-minus {
+    opacity: 0;
+}
+
+.projects-toggle-minus path {
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.projects-toggle[aria-expanded="false"] .projects-toggle-minus path:first-child {
+    transform: translate(-2px, 0) rotate(-22deg);
+}
+
+.projects-toggle[aria-expanded="false"] .projects-toggle-minus path:last-child {
+    transform: translate(2px, 0) rotate(22deg);
 }
 
 .projects-command {

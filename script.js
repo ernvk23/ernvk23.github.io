@@ -191,6 +191,7 @@
 
 // Terminal minimize/expand — always starts expanded
 (function () {
+    const section = document.querySelector('.projects');
     const panel = document.querySelector('.projects-panel');
     const toggle = document.querySelector('.projects-toggle');
     const body = document.getElementById('projects-body');
@@ -201,6 +202,11 @@
         const expanded = toggle.getAttribute('aria-expanded') === 'true';
         const next = !expanded;
 
+        // Keep the page still: reserve the section's expanded height while closed.
+        if (!next && section) {
+            section.style.minHeight = `${section.getBoundingClientRect().height}px`;
+        }
+
         toggle.setAttribute('aria-expanded', String(next));
         toggle.setAttribute('aria-label', next
             ? toggle.dataset.labelMinimize || 'Minimize projects'
@@ -209,6 +215,8 @@
         body.hidden = !next;
         panel.classList.toggle('is-collapsed', !next);
         ambient?.classList.toggle('is-paused', !next);
+
+        if (next && section) section.style.minHeight = '';
     });
 })();
 
