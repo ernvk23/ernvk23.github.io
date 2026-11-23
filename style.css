@@ -96,8 +96,20 @@ body {
     inset: 0;
     padding-inline: clamp(1.5rem, 8vw, 8rem);
     overflow: hidden;
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-    mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom,
+            transparent 0,
+            transparent 8%,
+            #000 32%,
+            #000 68%,
+            transparent 92%,
+            transparent 100%);
+    mask-image: linear-gradient(to bottom,
+            transparent 0,
+            transparent 8%,
+            #000 32%,
+            #000 68%,
+            transparent 92%,
+            transparent 100%);
 }
 
 .ambient-stream pre {
