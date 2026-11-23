@@ -321,6 +321,7 @@ html[lang="es"] .lang-switcher button[data-lang="es"] {
 .project-links {
     display: flex;
     flex-direction: column;
+    gap: 0.25rem;
 }
 
 .project-link {
